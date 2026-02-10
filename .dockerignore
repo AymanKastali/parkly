@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+CLAUDE.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore

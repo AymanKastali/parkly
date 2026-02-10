@@ -1,0 +1,46 @@
+{
+  "name": "Parkly",
+  "dockerComposeFile": [
+    "docker-compose.yml"
+  ],
+  "service": "app",
+  "workspaceFolder": "/app",
+  "remoteUser": "vscode",
+  "postCreateCommand": "uv sync",  // `uv sync --no-dev` to install only production dependencies
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "charliermarsh.ruff",
+        "tamasfe.even-better-toml",
+        "streetsidesoftware.code-spell-checker",
+        "mhutchie.git-graph",
+        "shd101wyy.markdown-preview-enhanced",
+        "eamodio.gitlens",
+        "jebbs.plantuml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/app/.venv/bin/python",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          }
+        },
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.autoImportCompletions": true,
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true
+      }
+    }
+  },
+  "forwardPorts": [5678],
+  "features": {
+    "ghcr.io/devcontainers/features/sshd:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  }
+}

@@ -1,0 +1,13 @@
+[project]
+name = "parkly"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.14.*"
+dependencies = []
+
+[dependency-groups]
+dev = ["debugpy==1.8", "pytest==8.0"]
+
+[tool.ruff]
+line-length = 88

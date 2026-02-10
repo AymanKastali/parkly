@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/app:cached
+    command: sleep infinity
+    init: true
+    tty: true
+    ports:
+      - "5678:5678"
