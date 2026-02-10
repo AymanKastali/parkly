@@ -1,0 +1,55 @@
+@startuml domain_services
+!include _style.puml
+
+title Parkly — Domain Services (Pricing)
+
+class PricingService <<Domain Service>> {
+    strategy : PricingStrategy
+    --
+    calculate_price(facility: ParkingFacility, time_slot: TimeSlot, vehicle: Vehicle) : Money
+}
+
+interface PricingStrategy {
+    calculate(time_slot: TimeSlot, base_rate: Money) : Money
+}
+
+class StaticPricing <<Domain Service>> {
+    calculate(time_slot: TimeSlot, base_rate: Money) : Money
+}
+note right of StaticPricing : Flat rate per hour/day
+
+class DynamicPricing <<Domain Service>> {
+    calculate(time_slot: TimeSlot, base_rate: Money) : Money
+}
+note right of DynamicPricing : Demand-based surge pricing
+
+class EventAwarePricing <<Domain Service>> {
+    calculate(time_slot: TimeSlot, base_rate: Money) : Money
+}
+note right of EventAwarePricing : Premium pricing near event venues
+
+class TimeOfDayPricing <<Domain Service>> {
+    calculate(time_slot: TimeSlot, base_rate: Money) : Money
+}
+note right of TimeOfDayPricing : Peak / off-peak tiers
+
+class TieredPricing <<Domain Service>> {
+    calculate(time_slot: TimeSlot, base_rate: Money) : Money
+}
+note right of TieredPricing : First hour free, then graduated rates
+
+class DurationDiscountPricing <<Domain Service>> {
+    calculate(time_slot: TimeSlot, base_rate: Money) : Money
+}
+note right of DurationDiscountPricing : Daily max cap, monthly pass
+
+PricingService o-- PricingStrategy
+
+StaticPricing ..|> PricingStrategy
+DynamicPricing ..|> PricingStrategy
+EventAwarePricing ..|> PricingStrategy
+TimeOfDayPricing ..|> PricingStrategy
+TieredPricing ..|> PricingStrategy
+DurationDiscountPricing ..|> PricingStrategy
+
+@enduml

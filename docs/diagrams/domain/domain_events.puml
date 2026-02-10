@@ -1,0 +1,72 @@
+@startuml domain_events
+!include _style.puml
+
+title Parkly — Domain Events
+
+' ── ParkingFacility Events ───────────────────────────────────
+
+package "ParkingFacility Events" {
+    class FacilityCreated <<Domain Event>> {
+        facility_id : FacilityId
+    }
+
+    class SpotAdded <<Domain Event>> {
+        facility_id : FacilityId
+        spot_id : SpotId
+        spot_type : SpotType
+    }
+}
+
+' ── Reservation Events ───────────────────────────────────────
+
+package "Reservation Events" {
+    class ReservationCreated <<Domain Event>> {
+        reservation_id : ReservationId
+        facility_id : FacilityId
+        spot_id : SpotId
+        vehicle_id : VehicleId
+        time_slot : TimeSlot
+    }
+
+    class ReservationConfirmed <<Domain Event>> {
+        reservation_id : ReservationId
+    }
+
+    class ReservationCancelled <<Domain Event>> {
+        reservation_id : ReservationId
+        reason : str
+    }
+}
+
+' ── ParkingSession Events ────────────────────────────────────
+
+package "ParkingSession Events" {
+    class SessionStarted <<Domain Event>> {
+        session_id : SessionId
+        facility_id : FacilityId
+        spot_id : SpotId
+        vehicle_id : VehicleId
+    }
+
+    class SessionExtended <<Domain Event>> {
+        session_id : SessionId
+        new_end : datetime
+    }
+
+    class SessionEnded <<Domain Event>> {
+        session_id : SessionId
+        total_cost : Money
+    }
+}
+
+' ── Vehicle Events ───────────────────────────────────────────
+
+package "Vehicle Events" {
+    class VehicleRegistered <<Domain Event>> {
+        vehicle_id : VehicleId
+        owner_id : OwnerId
+        license_plate : LicensePlate
+    }
+}
+
+@enduml
