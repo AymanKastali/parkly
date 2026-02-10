@@ -1,0 +1,138 @@
+@startuml domain_exceptions
+!include _style.puml
+
+title Parkly — Domain Exceptions
+
+' ── Root ────────────────────────────────────────────────────
+
+abstract class DomainException <<Exception>> {
+}
+
+' ── Validation Errors ──────────────────────────────────────
+
+abstract class DomainValidationError <<Exception>> {
+}
+
+class InvalidTimeSlotError <<Exception>> {
+    "TimeSlot start must be before end"
+}
+
+abstract class InvalidMoneyAmountError <<Exception>> {
+}
+
+class NonDecimalMoneyAmountError <<Exception>> {
+    "Money amount must be a Decimal"
+}
+
+class NegativeMoneyAmountError <<Exception>> {
+    "Money amount must be non-negative"
+}
+
+class EmptyCurrencyError <<Exception>> {
+    "Currency must not be empty"
+}
+
+class CurrencyMismatchError <<Exception>> {
+    currency_a : str
+    currency_b : str
+}
+
+class NegativeMoneyResultError <<Exception>> {
+    "Subtraction would result in negative amount"
+}
+
+abstract class EmptyLicensePlateError <<Exception>> {
+}
+
+class EmptyLicensePlateValueError <<Exception>> {
+    "License plate value must not be empty"
+}
+
+class EmptyLicensePlateRegionError <<Exception>> {
+    "License plate region must not be empty"
+}
+
+class InvalidLatitudeError <<Exception>> {
+    "Latitude must be between -90 and 90"
+}
+
+class InvalidLongitudeError <<Exception>> {
+    "Longitude must be between -180 and 180"
+}
+
+class NegativeCapacityError <<Exception>> {
+    "Total capacity must be non-negative"
+}
+
+class DuplicateSpotError <<Exception>> {
+    spot_id : object
+}
+
+class SpotNotFoundError <<Exception>> {
+    spot_id : object
+}
+
+class InvalidExtensionError <<Exception>> {
+    "New end time must be after current end time"
+}
+
+' ── Operation Errors ───────────────────────────────────────
+
+abstract class InvalidOperationError <<Exception>> {
+}
+
+class InvalidStatusTransitionError <<Exception>> {
+    from_status : str
+    to_status : str
+}
+
+class ReservationNotExtendableError <<Exception>> {
+    status : str
+}
+
+class SessionAlreadyEndedError <<Exception>> {
+    "Session has already ended"
+}
+
+' ── Specific Domain Errors ─────────────────────────────────
+
+class SpotNotAvailableError <<Exception>> {
+    spot_identifier : str
+}
+
+class CapacityExceededError <<Exception>> {
+    facility_name : str
+    capacity : int
+}
+
+' ── Hierarchy ──────────────────────────────────────────────
+
+DomainException <|-- DomainValidationError
+DomainException <|-- InvalidOperationError
+DomainException <|-- SpotNotAvailableError
+DomainException <|-- CapacityExceededError
+
+DomainValidationError <|-- InvalidTimeSlotError
+DomainValidationError <|-- InvalidMoneyAmountError
+DomainValidationError <|-- EmptyCurrencyError
+DomainValidationError <|-- CurrencyMismatchError
+DomainValidationError <|-- NegativeMoneyResultError
+DomainValidationError <|-- EmptyLicensePlateError
+DomainValidationError <|-- InvalidLatitudeError
+DomainValidationError <|-- InvalidLongitudeError
+DomainValidationError <|-- NegativeCapacityError
+DomainValidationError <|-- DuplicateSpotError
+DomainValidationError <|-- SpotNotFoundError
+DomainValidationError <|-- InvalidExtensionError
+
+InvalidMoneyAmountError <|-- NonDecimalMoneyAmountError
+InvalidMoneyAmountError <|-- NegativeMoneyAmountError
+
+EmptyLicensePlateError <|-- EmptyLicensePlateValueError
+EmptyLicensePlateError <|-- EmptyLicensePlateRegionError
+
+InvalidOperationError <|-- InvalidStatusTransitionError
+InvalidOperationError <|-- ReservationNotExtendableError
+InvalidOperationError <|-- SessionAlreadyEndedError
+
+@enduml

@@ -58,6 +58,11 @@ skinparam class {
     BackgroundColor<<Domain Service>> #252525
     BorderColor<<Domain Service>> #FFFFFF
     FontColor<<Domain Service>> #FFFFFF
+
+    ' --- EXCEPTION (Crimson Red) ---
+    BackgroundColor<<Exception>> #330A0A
+    BorderColor<<Exception>> #FF3333
+    FontColor<<Exception>> #FFFFFF
 }
 skinparam note {
     ' Deep indigo-grey background
