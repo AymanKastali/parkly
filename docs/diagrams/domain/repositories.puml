@@ -1,0 +1,56 @@
+@startuml repositories
+!include _style.puml
+
+title Parkly — Repository Interfaces
+
+' ── Aggregates (simplified) ──────────────────────────────────
+
+class ParkingFacility <<Aggregate Root>> {
+}
+
+class Reservation <<Aggregate Root>> {
+}
+
+class Vehicle <<Aggregate Root>> {
+}
+
+class ParkingSession <<Aggregate Root>> {
+}
+
+' ── Repository ABCs ──────────────────────────────────────────
+
+abstract class ParkingFacilityRepository <<Repository>> {
+    {abstract} save(facility: ParkingFacility)
+    {abstract} find_by_id(id: FacilityId) : ParkingFacility | None
+    {abstract} find_by_location(location: Location, radius: Decimal) : list[ParkingFacility]
+}
+
+abstract class ReservationRepository <<Repository>> {
+    {abstract} save(reservation: Reservation)
+    {abstract} find_by_id(id: ReservationId) : Reservation | None
+    {abstract} find_by_spot_and_time(spot_id: SpotId, time_slot: TimeSlot) : list[Reservation]
+    {abstract} find_by_vehicle(vehicle_id: VehicleId) : list[Reservation]
+}
+
+abstract class VehicleRepository <<Repository>> {
+    {abstract} save(vehicle: Vehicle)
+    {abstract} find_by_id(id: VehicleId) : Vehicle | None
+    {abstract} find_by_owner(owner_id: OwnerId) : list[Vehicle]
+    {abstract} find_by_license_plate(plate: LicensePlate) : Vehicle | None
+}
+
+abstract class ParkingSessionRepository <<Repository>> {
+    {abstract} save(session: ParkingSession)
+    {abstract} find_by_id(id: SessionId) : ParkingSession | None
+    {abstract} find_active_by_spot(spot_id: SpotId) : ParkingSession | None
+    {abstract} find_by_vehicle(vehicle_id: VehicleId) : list[ParkingSession]
+}
+
+' ── Relationships ────────────────────────────────────────────
+
+ParkingFacilityRepository ..> ParkingFacility
+ReservationRepository ..> Reservation
+VehicleRepository ..> Vehicle
+ParkingSessionRepository ..> ParkingSession
+
+@enduml

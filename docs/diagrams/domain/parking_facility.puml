@@ -1,0 +1,75 @@
+@startuml parking_facility
+!include _style.puml
+
+title Parkly — ParkingFacility Aggregate
+
+class ParkingFacility <<Aggregate Root>> {
+    id : FacilityId
+    name : str
+    location : Location
+    facility_type : FacilityType
+    access_control : AccessControlMethod
+    total_capacity : int
+    spots : list[ParkingSpot]
+    --
+    add_spot(spot: ParkingSpot)
+    remove_spot(spot_id: SpotId)
+    get_available_spots(time_slot: TimeSlot, spot_type: SpotType | None) : list[ParkingSpot]
+}
+
+class ParkingSpot <<Entity>> {
+    id : SpotId
+    spot_number : str
+    spot_type : SpotType
+    status : SpotStatus
+    --
+    is_available(time_slot: TimeSlot) : bool
+    reserve()
+    release()
+}
+
+enum FacilityType <<Enum>> {
+    PUBLIC
+    PRIVATE
+}
+
+enum SpotType <<Enum>> {
+    STANDARD
+    EV_CHARGING
+    HANDICAPPED
+    MOTORCYCLE
+    OVERSIZED
+    BICYCLE
+}
+
+enum SpotStatus <<Enum>> {
+    AVAILABLE
+    OCCUPIED
+    RESERVED
+    OUT_OF_SERVICE
+}
+
+enum AccessControlMethod <<Enum>> {
+    LPR
+    QR_CODE
+    DIGITAL_PASS
+    GATE_BARRIER
+}
+
+enum ParkingCategory <<Enum>> {
+    HOURLY
+    DAILY
+    MONTHLY
+    EVENT
+    AIRPORT
+    VALET
+    PEER_TO_PEER
+}
+
+ParkingFacility *-- "many" ParkingSpot : contains
+ParkingFacility o-- FacilityType
+ParkingFacility o-- AccessControlMethod
+ParkingSpot o-- SpotType
+ParkingSpot o-- SpotStatus
+
+@enduml

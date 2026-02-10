@@ -1,0 +1,33 @@
+@startuml vehicle
+!include _style.puml
+
+title Parkly — Vehicle Aggregate
+
+class Vehicle <<Aggregate Root>> {
+    id : VehicleId
+    owner_id : OwnerId
+    license_plate : LicensePlate
+    vehicle_type : VehicleType
+    is_ev : bool
+    --
+    eligible_spot_types() : list[SpotType]
+}
+
+class LicensePlate <<Value Object>> {
+    value : str
+    region : str
+    --
+    formatted() : str
+}
+
+enum VehicleType <<Enum>> {
+    CAR
+    MOTORCYCLE
+    TRUCK
+    BICYCLE
+}
+
+Vehicle o-- LicensePlate
+Vehicle o-- VehicleType
+
+@enduml

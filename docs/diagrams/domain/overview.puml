@@ -1,0 +1,32 @@
+@startuml overview
+!include _style.puml
+
+title Parkly — Aggregate Map (Overview)
+
+class ParkingFacility <<Aggregate Root>> {
+}
+
+class ParkingSpot <<Entity>> {
+}
+
+class Reservation <<Aggregate Root>> {
+}
+
+class Vehicle <<Aggregate Root>> {
+}
+
+class ParkingSession <<Aggregate Root>> {
+}
+
+ParkingFacility *-- "many" ParkingSpot : contains
+
+Reservation ..> ParkingFacility : facility_id
+Reservation ..> ParkingSpot : spot_id
+Reservation ..> Vehicle : vehicle_id
+
+ParkingSession ..> Reservation : reservation_id
+ParkingSession ..> ParkingSpot : spot_id
+ParkingSession ..> Vehicle : vehicle_id
+ParkingSession ..> ParkingFacility : facility_id
+
+@enduml

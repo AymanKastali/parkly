@@ -1,0 +1,71 @@
+@startuml value_objects
+!include _style.puml
+
+title Parkly — Value Objects & Enums
+
+' ── Typed Identity Value Objects ──────────────────────────────
+
+package "Typed IDs" {
+    class FacilityId <<Value Object>> {
+        value : UUID
+    }
+
+    class SpotId <<Value Object>> {
+        value : UUID
+    }
+
+    class ReservationId <<Value Object>> {
+        value : UUID
+    }
+
+    class VehicleId <<Value Object>> {
+        value : UUID
+    }
+
+    class SessionId <<Value Object>> {
+        value : UUID
+    }
+
+    class OwnerId <<Value Object>> {
+        value : UUID
+    }
+}
+
+' ── Domain Value Objects ─────────────────────────────────────
+
+package "Domain Value Objects" {
+    class TimeSlot <<Value Object>> {
+        start : datetime
+        end : datetime
+        --
+        overlaps(other: TimeSlot) : bool
+        is_adjacent(other: TimeSlot) : bool
+        duration() : timedelta
+    }
+
+    class Money <<Value Object>> {
+        amount : Decimal
+        currency : str
+        --
+        add(other: Money) : Money
+        subtract(other: Money) : Money
+        multiply(factor: Decimal) : Money
+    }
+
+    class LicensePlate <<Value Object>> {
+        value : str
+        region : str
+        --
+        formatted() : str
+    }
+
+    class Location <<Value Object>> {
+        latitude : Decimal
+        longitude : Decimal
+        address : str
+        --
+        distance_to(other: Location) : Decimal
+    }
+}
+
+@enduml

@@ -1,0 +1,73 @@
+@startuml
+' ============================================================
+' Parkly — High Contrast Dark Theme
+' ============================================================
+
+' Global Canvas Settings
+skinparam backgroundColor #0F0F0F
+skinparam defaultFontColor #FFFFFF
+skinparam arrowColor #B0B0B0
+skinparam stereotypeFontColor #FFFFFF
+
+' General skin parameters
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classHeaderBackgroundColor #222222
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultFontName "Segoe UI"
+skinparam packageStyle rectangle
+
+' Stereotype colors - Pure White Text on Deep Themed Fills
+skinparam class {
+    ' Default Class
+    BackgroundColor #1A1A1A
+    BorderColor #666666
+    FontColor #FFFFFF
+
+    ' --- AGGREGATE ROOT (Vivid Gold) ---
+    BackgroundColor<<Aggregate Root>> #2A2400
+    BorderColor<<Aggregate Root>> #FFD700
+    FontColor<<Aggregate Root>> #FFFFFF
+
+    ' --- ENTITY (Bright Azure) ---
+    BackgroundColor<<Entity>> #05263B
+    BorderColor<<Entity>> #00BFFF
+    FontColor<<Entity>> #FFFFFF
+
+    ' --- VALUE OBJECT (Spring Green) ---
+    BackgroundColor<<Value Object>> #0A2B14
+    BorderColor<<Value Object>> #00FF7F
+    FontColor<<Value Object>> #FFFFFF
+
+    ' --- ENUM (Electric Violet) ---
+    BackgroundColor<<Enum>> #26112B
+    BorderColor<<Enum>> #BF00FF
+    FontColor<<Enum>> #FFFFFF
+
+    ' --- DOMAIN EVENT (Bright Coral) ---
+    BackgroundColor<<Domain Event>> #33160F
+    BorderColor<<Domain Event>> #FF4D00
+    FontColor<<Domain Event>> #FFFFFF
+
+    ' --- INFRASTRUCTURE (Cool Grey) ---
+    BackgroundColor<<Repository>> #252525
+    BorderColor<<Repository>> #FFFFFF
+    FontColor<<Repository>> #FFFFFF
+
+    BackgroundColor<<Domain Service>> #252525
+    BorderColor<<Domain Service>> #FFFFFF
+    FontColor<<Domain Service>> #FFFFFF
+}
+skinparam note {
+    ' Deep indigo-grey background
+    BackgroundColor #1A1C2E
+    ' Muted blue border to keep it subtle
+    BorderColor #5C6BC0
+    ' Pure white text
+    FontColor #FFFFFF
+    FontSize 12
+    ' This makes the note look more modern
+    shadowing false
+}
+@enduml

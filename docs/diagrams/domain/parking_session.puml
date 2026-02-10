@@ -1,0 +1,33 @@
+@startuml parking_session
+!include _style.puml
+
+title Parkly — ParkingSession Aggregate
+
+class ParkingSession <<Aggregate Root>> {
+    id : SessionId
+    reservation_id : ReservationId | None
+    facility_id : FacilityId
+    spot_id : SpotId
+    vehicle_id : VehicleId
+    entry_time : datetime
+    exit_time : datetime | None
+    total_cost : Money
+    --
+    start()
+    extend(new_end: datetime)
+    end()
+    calculate_cost() : Money
+}
+
+class Money <<Value Object>> {
+    amount : Decimal
+    currency : str
+    --
+    add(other: Money) : Money
+    subtract(other: Money) : Money
+    multiply(factor: Decimal) : Money
+}
+
+ParkingSession o-- Money
+
+@enduml

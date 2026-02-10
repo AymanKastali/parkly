@@ -1,0 +1,53 @@
+@startuml reservation
+!include _style.puml
+
+title Parkly — Reservation Aggregate
+
+class Reservation <<Aggregate Root>> {
+    id : ReservationId
+    facility_id : FacilityId
+    spot_id : SpotId
+    vehicle_id : VehicleId
+    time_slot : TimeSlot
+    status : ReservationStatus
+    total_cost : Money
+    created_at : datetime
+    --
+    confirm()
+    activate()
+    complete()
+    cancel()
+    extend(new_end: datetime)
+}
+
+class TimeSlot <<Value Object>> {
+    start : datetime
+    end : datetime
+    --
+    overlaps(other: TimeSlot) : bool
+    is_adjacent(other: TimeSlot) : bool
+    duration() : timedelta
+}
+
+class Money <<Value Object>> {
+    amount : Decimal
+    currency : str
+    --
+    add(other: Money) : Money
+    subtract(other: Money) : Money
+    multiply(factor: Decimal) : Money
+}
+
+enum ReservationStatus <<Enum>> {
+    PENDING
+    CONFIRMED
+    ACTIVE
+    COMPLETED
+    CANCELLED
+}
+
+Reservation o-- TimeSlot
+Reservation o-- Money
+Reservation o-- ReservationStatus
+
+@enduml
