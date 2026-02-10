@@ -6,7 +6,7 @@
   "service": "app",
   "workspaceFolder": "/app",
   "remoteUser": "vscode",
-  "postCreateCommand": "uv sync",  // `uv sync --no-dev` to install only production dependencies
+  "postCreateCommand": "uv sync && uv run pre-commit install && (uvx ruff check . || true) && (uvx ruff format --check . || true) && (uv run pytest || true)",  // installs deps, sets up git hooks, and runs informational checks
   "customizations": {
     "vscode": {
       "extensions": [
