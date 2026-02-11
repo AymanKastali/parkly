@@ -1,5 +1,7 @@
 services:
   app:
+    container_name: parkly
+    image: parkly-dev
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
@@ -10,3 +12,4 @@ services:
     tty: true
     ports:
       - "5678:5678"
+      - "8000:8000"
