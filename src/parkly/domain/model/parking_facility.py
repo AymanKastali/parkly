@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
 from typing import Self
 
-from parkly.domain.event.events import FacilityCreated, SpotAdded
+from parkly.domain.event.events import FacilityCreated, SpotAdded, SpotRemoved
 from parkly.domain.exception.exceptions import (
     CapacityExceededError,
     DuplicateSpotError,
-    NegativeCapacityError,
     RequiredFieldError,
     SpotNotAvailableError,
     SpotNotFoundError,
@@ -16,14 +15,20 @@ from parkly.domain.model.enums import (
     SpotStatus,
     SpotType,
 )
-from parkly.domain.model.typed_ids import FacilityId, SpotId
-from parkly.domain.model.value_objects import Location, TimeSlot
 from parkly.domain.model.entity import AggregateRoot, Entity
+from parkly.domain.model.typed_ids import FacilityId, SpotId
+from parkly.domain.model.value_objects import (
+    Capacity,
+    FacilityName,
+    Location,
+    SpotNumber,
+    TimeSlot,
+)
 
 
 @dataclass
 class ParkingSpot(Entity[SpotId]):
-    _spot_number: str
+    _spot_number: SpotNumber
     _spot_type: SpotType
     _status: SpotStatus
 
@@ -31,13 +36,13 @@ class ParkingSpot(Entity[SpotId]):
     def create(
         cls,
         spot_id: SpotId,
-        spot_number: str,
+        spot_number: SpotNumber,
         spot_type: SpotType,
         status: SpotStatus,
     ) -> Self:
         if spot_id is None:
             raise RequiredFieldError(cls.__name__, "spot_id")
-        if not spot_number or not spot_number.strip():
+        if spot_number is None:
             raise RequiredFieldError(cls.__name__, "spot_number")
         if spot_type is None:
             raise RequiredFieldError(cls.__name__, "spot_type")
@@ -54,7 +59,7 @@ class ParkingSpot(Entity[SpotId]):
     def reconstitute(
         cls,
         spot_id: SpotId,
-        spot_number: str,
+        spot_number: SpotNumber,
         spot_type: SpotType,
         status: SpotStatus,
     ) -> Self:
@@ -66,7 +71,7 @@ class ParkingSpot(Entity[SpotId]):
         )
 
     @property
-    def spot_number(self) -> str:
+    def spot_number(self) -> SpotNumber:
         return self._spot_number
 
     @property
@@ -82,7 +87,7 @@ class ParkingSpot(Entity[SpotId]):
 
     def reserve(self) -> None:
         if self._status != SpotStatus.AVAILABLE:
-            raise SpotNotAvailableError(spot_identifier=self._spot_number)
+            raise SpotNotAvailableError(spot_identifier=str(self._spot_number))
         self._status = SpotStatus.RESERVED
 
     def release(self) -> None:
@@ -91,15 +96,15 @@ class ParkingSpot(Entity[SpotId]):
 
 @dataclass
 class ParkingFacility(AggregateRoot[FacilityId]):
-    _name: str
+    _name: FacilityName
     _location: Location
     _facility_type: FacilityType
     _access_control: AccessControlMethod
-    _total_capacity: int
+    _total_capacity: Capacity
     _spots: list[ParkingSpot] = field(default_factory=list)
 
     @property
-    def name(self) -> str:
+    def name(self) -> FacilityName:
         return self._name
 
     @property
@@ -115,7 +120,7 @@ class ParkingFacility(AggregateRoot[FacilityId]):
         return self._access_control
 
     @property
-    def total_capacity(self) -> int:
+    def total_capacity(self) -> Capacity:
         return self._total_capacity
 
     @property
@@ -125,16 +130,16 @@ class ParkingFacility(AggregateRoot[FacilityId]):
     @classmethod
     def create(
         cls,
-        name: str,
+        facility_id: FacilityId,
+        name: FacilityName,
         location: Location,
         facility_type: FacilityType,
         access_control: AccessControlMethod,
-        total_capacity: int,
-        facility_id: FacilityId,
+        total_capacity: Capacity,
     ) -> Self:
         if facility_id is None:
             raise RequiredFieldError(cls.__name__, "facility_id")
-        if not name or not name.strip():
+        if name is None:
             raise RequiredFieldError(cls.__name__, "name")
         if location is None:
             raise RequiredFieldError(cls.__name__, "location")
@@ -144,8 +149,6 @@ class ParkingFacility(AggregateRoot[FacilityId]):
             raise RequiredFieldError(cls.__name__, "access_control")
         if total_capacity is None:
             raise RequiredFieldError(cls.__name__, "total_capacity")
-        if total_capacity < 0:
-            raise NegativeCapacityError()
         facility = cls(
             _id=facility_id,
             _name=name,
@@ -165,11 +168,11 @@ class ParkingFacility(AggregateRoot[FacilityId]):
     def reconstitute(
         cls,
         facility_id: FacilityId,
-        name: str,
+        name: FacilityName,
         location: Location,
         facility_type: FacilityType,
         access_control: AccessControlMethod,
-        total_capacity: int,
+        total_capacity: Capacity,
         spots: list[ParkingSpot] | None = None,
     ) -> Self:
         return cls(
@@ -185,13 +188,13 @@ class ParkingFacility(AggregateRoot[FacilityId]):
     def add_spot(
         self,
         spot_id: SpotId,
-        spot_number: str,
+        spot_number: SpotNumber,
         spot_type: SpotType,
         status: SpotStatus,
     ) -> None:
-        if len(self._spots) >= self._total_capacity:
+        if len(self._spots) >= self._total_capacity.value:
             raise CapacityExceededError(
-                facility_name=self._name, capacity=self._total_capacity
+                facility_name=str(self._name), capacity=self._total_capacity.value
             )
         for existing in self._spots:
             if existing.id == spot_id:
@@ -215,6 +218,26 @@ class ParkingFacility(AggregateRoot[FacilityId]):
         for i, spot in enumerate(self._spots):
             if spot.id == spot_id:
                 self._spots.pop(i)
+                self._record_event(
+                    SpotRemoved(
+                        facility_id=self._id,
+                        spot_id=spot_id,
+                    )
+                )
+                return
+        raise SpotNotFoundError(spot_id=spot_id)
+
+    def reserve_spot(self, spot_id: SpotId) -> None:
+        for spot in self._spots:
+            if spot.id == spot_id:
+                spot.reserve()
+                return
+        raise SpotNotFoundError(spot_id=spot_id)
+
+    def release_spot(self, spot_id: SpotId) -> None:
+        for spot in self._spots:
+            if spot.id == spot_id:
+                spot.release()
                 return
         raise SpotNotFoundError(spot_id=spot_id)
 

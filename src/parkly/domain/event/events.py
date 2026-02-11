@@ -28,6 +28,12 @@ class SpotAdded(DomainEvent):
     spot_type: SpotType
 
 
+@dataclass(frozen=True)
+class SpotRemoved(DomainEvent):
+    facility_id: FacilityId
+    spot_id: SpotId
+
+
 # ── Reservation Events ─────────────────────────────────────────
 
 
@@ -51,6 +57,16 @@ class ReservationCancelled(DomainEvent):
     reason: str
 
 
+@dataclass(frozen=True)
+class ReservationActivated(DomainEvent):
+    reservation_id: ReservationId
+
+
+@dataclass(frozen=True)
+class ReservationCompleted(DomainEvent):
+    reservation_id: ReservationId
+
+
 # ── ParkingSession Events ──────────────────────────────────────
 
 
@@ -66,6 +82,7 @@ class SessionStarted(DomainEvent):
 class SessionExtended(DomainEvent):
     session_id: SessionId
     new_end: datetime
+    new_total_cost: Money
 
 
 @dataclass(frozen=True)

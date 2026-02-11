@@ -1,5 +1,10 @@
 from decimal import Decimal
 
+EARTH_RADIUS_KM = Decimal("6371.0")
+
+SECONDS_PER_HOUR = Decimal("3600")
+
+
 ISO_4217_CODES: frozenset[str] = frozenset(
     {
         "AED",
@@ -160,5 +165,3 @@ ISO_4217_CODES: frozenset[str] = frozenset(
         "ZWL",
     }
 )
-
-EARTH_RADIUS_KM = Decimal("6371.0")

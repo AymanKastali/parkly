@@ -2,13 +2,15 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
+from parkly.domain.exception.exceptions import RequiredFieldError
+
 
 @dataclass(frozen=True, kw_only=True)
 class DomainEvent:
     def __post_init__(self) -> None:
         for name in self.__dataclass_fields__:
             if getattr(self, name) is None:
-                raise TypeError(f"{type(self).__name__}.{name} must not be None")
+                raise RequiredFieldError(type(self).__name__, name)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -20,4 +22,4 @@ class EventEnvelope:
     def __post_init__(self) -> None:
         for name in self.__dataclass_fields__:
             if getattr(self, name) is None:
-                raise TypeError(f"EventEnvelope.{name} must not be None")
+                raise RequiredFieldError(type(self).__name__, name)

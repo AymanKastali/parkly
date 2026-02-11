@@ -13,15 +13,14 @@ class ParkingSession <<Aggregate Root>> {
     exit_time : datetime | None
     total_cost : Money
     --
-    start()
-    extend(new_end: datetime)
-    end()
-    calculate_cost() : Money
+    extend(new_end: datetime, new_total_cost: Money)
+    end(total_cost: Money, exit_time: datetime)
+    calculate_cost(rate_per_hour: Money, current_time: datetime) : Money
 }
 
 class Money <<Value Object>> {
     amount : Decimal
-    currency : str
+    currency : Currency
     --
     add(other: Money) : Money
     subtract(other: Money) : Money

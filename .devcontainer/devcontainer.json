@@ -6,7 +6,8 @@
   "service": "app",
   "workspaceFolder": "/app",
   "remoteUser": "vscode",
-  "postCreateCommand": "uv sync && uv run pre-commit install && (uvx ruff check . || true) && (uvx ruff format --check . || true) && (uv run pytest || true)",  // installs deps, sets up git hooks, and runs informational checks
+  "postCreateCommand": "(uvx ruff check . || true) && (uvx ruff format --check . || true) && (uv run pytest || true)",  // informational checks on first create
+  "postStartCommand": "uv sync && uv run pre-commit install",  // ensures deps + git hooks on every start
   "customizations": {
     "vscode": {
       "extensions": [

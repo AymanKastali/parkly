@@ -3,7 +3,9 @@ from datetime import datetime
 from typing import ClassVar, Self
 
 from parkly.domain.event.events import (
+    ReservationActivated,
     ReservationCancelled,
+    ReservationCompleted,
     ReservationConfirmed,
     ReservationCreated,
 )
@@ -115,6 +117,10 @@ class Reservation(AggregateRoot[ReservationId]):
             raise RequiredFieldError(cls.__name__, "total_cost")
         if created_at is None:
             raise RequiredFieldError(cls.__name__, "created_at")
+        if status != ReservationStatus.PENDING:
+            raise InvalidStatusTransitionError(
+                from_status="(initial)", to_status=status.value
+            )
         reservation = cls(
             _id=reservation_id,
             _facility_id=facility_id,
@@ -169,9 +175,19 @@ class Reservation(AggregateRoot[ReservationId]):
 
     def activate(self) -> None:
         self._transition_to(ReservationStatus.ACTIVE)
+        self._record_event(
+            ReservationActivated(
+                reservation_id=self._id,
+            )
+        )
 
     def complete(self) -> None:
         self._transition_to(ReservationStatus.COMPLETED)
+        self._record_event(
+            ReservationCompleted(
+                reservation_id=self._id,
+            )
+        )
 
     def cancel(self, reason: str = "") -> None:
         self._transition_to(ReservationStatus.CANCELLED)

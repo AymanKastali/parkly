@@ -51,20 +51,20 @@ class Vehicle(AggregateRoot[VehicleId]):
     @classmethod
     def create(
         cls,
+        vehicle_id: VehicleId,
         owner_id: OwnerId,
         license_plate: LicensePlate,
         vehicle_type: VehicleType,
-        vehicle_id: VehicleId,
         is_ev: bool,
     ) -> Self:
+        if vehicle_id is None:
+            raise RequiredFieldError(cls.__name__, "vehicle_id")
         if owner_id is None:
             raise RequiredFieldError(cls.__name__, "owner_id")
         if license_plate is None:
             raise RequiredFieldError(cls.__name__, "license_plate")
         if vehicle_type is None:
             raise RequiredFieldError(cls.__name__, "vehicle_type")
-        if vehicle_id is None:
-            raise RequiredFieldError(cls.__name__, "vehicle_id")
         if is_ev is None:
             raise RequiredFieldError(cls.__name__, "is_ev")
         vehicle = cls(

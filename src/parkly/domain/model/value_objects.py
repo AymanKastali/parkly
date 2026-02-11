@@ -8,10 +8,12 @@ from parkly.domain.exception.exceptions import (
     CurrencyMismatchError,
     EmptyLicensePlateRegionError,
     EmptyLicensePlateValueError,
+    EmptySpotNumberError,
     InvalidCurrencyCodeError,
     InvalidLatitudeError,
     InvalidLongitudeError,
     InvalidTimeSlotError,
+    NegativeCapacityError,
     NegativeMoneyAmountError,
     NegativeMoneyResultError,
     NonDecimalMoneyAmountError,
@@ -106,6 +108,19 @@ class LicensePlate:
 
 
 @dataclass(frozen=True)
+class SpotNumber:
+    value: str
+
+    def __post_init__(self) -> None:
+        if not self.value or not self.value.strip():
+            raise EmptySpotNumberError()
+        object.__setattr__(self, "value", self.value.strip())
+
+    def __str__(self) -> str:
+        return self.value
+
+
+@dataclass(frozen=True)
 class Location:
     latitude: Decimal
     longitude: Decimal
@@ -131,3 +146,27 @@ class Location:
         a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
         c = 2 * asin(sqrt(a))
         return EARTH_RADIUS_KM * Decimal(str(c))
+
+
+@dataclass(frozen=True)
+class FacilityName:
+    value: str
+
+    def __post_init__(self) -> None:
+        if not self.value or not self.value.strip():
+            raise RequiredFieldError(type(self).__name__, "value")
+        object.__setattr__(self, "value", self.value.strip())
+
+    def __str__(self) -> str:
+        return self.value
+
+
+@dataclass(frozen=True)
+class Capacity:
+    value: int
+
+    def __post_init__(self) -> None:
+        if self.value is None:
+            raise RequiredFieldError(type(self).__name__, "value")
+        if self.value < 0:
+            raise NegativeCapacityError()

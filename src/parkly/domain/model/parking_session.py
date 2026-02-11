@@ -19,6 +19,7 @@ from parkly.domain.model.typed_ids import (
     SpotId,
     VehicleId,
 )
+from parkly.domain.model.consts import SECONDS_PER_HOUR
 from parkly.domain.model.value_objects import Money
 from parkly.domain.model.entity import AggregateRoot
 
@@ -132,13 +133,15 @@ class ParkingSession(AggregateRoot[SessionId]):
             _total_cost=total_cost,
         )
 
-    def extend(self, new_end: datetime) -> None:
+    def extend(self, new_end: datetime, new_total_cost: Money) -> None:
         if not self.is_active:
             raise SessionAlreadyEndedError()
+        self._total_cost = new_total_cost
         self._record_event(
             SessionExtended(
                 session_id=self._id,
                 new_end=new_end,
+                new_total_cost=new_total_cost,
             )
         )
 
@@ -157,5 +160,5 @@ class ParkingSession(AggregateRoot[SessionId]):
     def calculate_cost(self, rate_per_hour: Money, current_time: datetime) -> Money:
         end = self._exit_time or current_time
         duration_seconds = (end - self._entry_time).total_seconds()
-        hours = Decimal(str(duration_seconds)) / Decimal("3600")
+        hours = Decimal(str(duration_seconds)) / SECONDS_PER_HOUR
         return rate_per_hour.multiply(hours)

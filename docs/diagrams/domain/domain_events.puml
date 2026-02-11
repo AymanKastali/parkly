@@ -15,6 +15,11 @@ package "ParkingFacility Events" {
         spot_id : SpotId
         spot_type : SpotType
     }
+
+    class SpotRemoved <<Domain Event>> {
+        facility_id : FacilityId
+        spot_id : SpotId
+    }
 }
 
 ' ── Reservation Events ───────────────────────────────────────
@@ -29,6 +34,14 @@ package "Reservation Events" {
     }
 
     class ReservationConfirmed <<Domain Event>> {
+        reservation_id : ReservationId
+    }
+
+    class ReservationActivated <<Domain Event>> {
+        reservation_id : ReservationId
+    }
+
+    class ReservationCompleted <<Domain Event>> {
         reservation_id : ReservationId
     }
 
@@ -51,6 +64,7 @@ package "ParkingSession Events" {
     class SessionExtended <<Domain Event>> {
         session_id : SessionId
         new_end : datetime
+        new_total_cost : Money
     }
 
     class SessionEnded <<Domain Event>> {

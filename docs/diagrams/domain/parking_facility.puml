@@ -5,27 +5,41 @@ title Parkly — ParkingFacility Aggregate
 
 class ParkingFacility <<Aggregate Root>> {
     id : FacilityId
-    name : str
+    name : FacilityName
     location : Location
     facility_type : FacilityType
     access_control : AccessControlMethod
-    total_capacity : int
+    total_capacity : Capacity
     spots : list[ParkingSpot]
     --
-    add_spot(spot: ParkingSpot)
+    add_spot(spot_id, spot_number, spot_type, status)
     remove_spot(spot_id: SpotId)
+    reserve_spot(spot_id: SpotId)
+    release_spot(spot_id: SpotId)
     get_available_spots(time_slot: TimeSlot, spot_type: SpotType | None) : list[ParkingSpot]
+}
+
+class FacilityName <<Value Object>> {
+    value : str
+}
+
+class Capacity <<Value Object>> {
+    value : int
 }
 
 class ParkingSpot <<Entity>> {
     id : SpotId
-    spot_number : str
+    spot_number : SpotNumber
     spot_type : SpotType
     status : SpotStatus
     --
     is_available(time_slot: TimeSlot) : bool
     reserve()
     release()
+}
+
+class SpotNumber <<Value Object>> {
+    value : str
 }
 
 enum FacilityType <<Enum>> {
@@ -67,8 +81,11 @@ enum ParkingCategory <<Enum>> {
 }
 
 ParkingFacility *-- "many" ParkingSpot : contains
+ParkingFacility o-- FacilityName
+ParkingFacility o-- Capacity
 ParkingFacility o-- FacilityType
 ParkingFacility o-- AccessControlMethod
+ParkingSpot o-- SpotNumber
 ParkingSpot o-- SpotType
 ParkingSpot o-- SpotStatus
 
