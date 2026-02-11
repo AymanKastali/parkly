@@ -62,6 +62,11 @@ class EmptyLicensePlateRegionError(EmptyLicensePlateError):
         super().__init__("License plate region must not be empty")
 
 
+class EmptySpotNumberError(DomainValidationError):
+    def __init__(self) -> None:
+        super().__init__("Spot number must not be empty")
+
+
 class InvalidLatitudeError(DomainValidationError):
     def __init__(self) -> None:
         super().__init__("Latitude must be between -90 and 90")
@@ -101,6 +106,15 @@ class InvalidExtensionError(DomainValidationError):
         super().__init__("New end time must be after current end time")
 
 
+class IneligibleSpotTypeError(DomainValidationError):
+    def __init__(self, vehicle_type: str, spot_type: str) -> None:
+        self.vehicle_type = vehicle_type
+        self.spot_type = spot_type
+        super().__init__(
+            f"Vehicle type {vehicle_type} is not eligible for spot type {spot_type}"
+        )
+
+
 # --- Operation errors (lifecycle / state-machine violations) ---
 
 
@@ -126,6 +140,12 @@ class SessionAlreadyEndedError(InvalidOperationError):
         super().__init__("Session has already ended")
 
 
+class SpotAlreadyReservedError(InvalidOperationError):
+    def __init__(self, spot_identifier: str) -> None:
+        self.spot_identifier = spot_identifier
+        super().__init__(f"Spot {spot_identifier} is already reserved")
+
+
 # --- Specific domain errors ---
 
 
@@ -142,3 +162,35 @@ class CapacityExceededError(DomainException):
         super().__init__(
             f"Facility {facility_name} has reached its capacity of {capacity}"
         )
+
+
+# --- Pricing config validation errors ---
+
+
+class InvalidPeakHourRangeError(DomainValidationError):
+    def __init__(self, start: int, end: int) -> None:
+        self.start = start
+        self.end = end
+        super().__init__(
+            f"Peak start hour ({start}) must be less than peak end hour ({end})"
+        )
+
+
+class InvalidHourValueError(DomainValidationError):
+    def __init__(self, field_name: str, value: int) -> None:
+        self.field_name = field_name
+        self.value = value
+        super().__init__(f"{field_name} must be between 0 and 23, got {value}")
+
+
+class InvalidMultiplierError(DomainValidationError):
+    def __init__(self, field_name: str, value: object) -> None:
+        self.field_name = field_name
+        self.value = value
+        super().__init__(f"{field_name} must be positive, got {value}")
+
+
+class InvalidFreeHoursError(DomainValidationError):
+    def __init__(self, value: int) -> None:
+        self.value = value
+        super().__init__(f"free_hours must be non-negative, got {value}")

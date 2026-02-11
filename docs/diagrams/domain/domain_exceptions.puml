@@ -28,8 +28,8 @@ class NegativeMoneyAmountError <<Exception>> {
     "Money amount must be non-negative"
 }
 
-class EmptyCurrencyError <<Exception>> {
-    "Currency must not be empty"
+class InvalidCurrencyCodeError <<Exception>> {
+    code : str
 }
 
 class CurrencyMismatchError <<Exception>> {
@@ -52,12 +52,21 @@ class EmptyLicensePlateRegionError <<Exception>> {
     "License plate region must not be empty"
 }
 
+class EmptySpotNumberError <<Exception>> {
+    "Spot number must not be empty"
+}
+
 class InvalidLatitudeError <<Exception>> {
     "Latitude must be between -90 and 90"
 }
 
 class InvalidLongitudeError <<Exception>> {
     "Longitude must be between -180 and 180"
+}
+
+class RequiredFieldError <<Exception>> {
+    entity_name : str
+    field_name : str
 }
 
 class NegativeCapacityError <<Exception>> {
@@ -76,6 +85,11 @@ class InvalidExtensionError <<Exception>> {
     "New end time must be after current end time"
 }
 
+class IneligibleSpotTypeError <<Exception>> {
+    vehicle_type : str
+    spot_type : str
+}
+
 ' ── Operation Errors ───────────────────────────────────────
 
 abstract class InvalidOperationError <<Exception>> {
@@ -92,6 +106,10 @@ class ReservationNotExtendableError <<Exception>> {
 
 class SessionAlreadyEndedError <<Exception>> {
     "Session has already ended"
+}
+
+class SpotAlreadyReservedError <<Exception>> {
+    spot_identifier : str
 }
 
 ' ── Specific Domain Errors ─────────────────────────────────
@@ -114,16 +132,19 @@ DomainException <|-- CapacityExceededError
 
 DomainValidationError <|-- InvalidTimeSlotError
 DomainValidationError <|-- InvalidMoneyAmountError
-DomainValidationError <|-- EmptyCurrencyError
+DomainValidationError <|-- InvalidCurrencyCodeError
+DomainValidationError <|-- EmptySpotNumberError
 DomainValidationError <|-- CurrencyMismatchError
 DomainValidationError <|-- NegativeMoneyResultError
 DomainValidationError <|-- EmptyLicensePlateError
 DomainValidationError <|-- InvalidLatitudeError
 DomainValidationError <|-- InvalidLongitudeError
+DomainValidationError <|-- RequiredFieldError
 DomainValidationError <|-- NegativeCapacityError
 DomainValidationError <|-- DuplicateSpotError
 DomainValidationError <|-- SpotNotFoundError
 DomainValidationError <|-- InvalidExtensionError
+DomainValidationError <|-- IneligibleSpotTypeError
 
 InvalidMoneyAmountError <|-- NonDecimalMoneyAmountError
 InvalidMoneyAmountError <|-- NegativeMoneyAmountError
@@ -134,5 +155,6 @@ EmptyLicensePlateError <|-- EmptyLicensePlateRegionError
 InvalidOperationError <|-- InvalidStatusTransitionError
 InvalidOperationError <|-- ReservationNotExtendableError
 InvalidOperationError <|-- SessionAlreadyEndedError
+InvalidOperationError <|-- SpotAlreadyReservedError
 
 @enduml
