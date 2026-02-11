@@ -7,7 +7,8 @@
   "workspaceFolder": "/app",
   "remoteUser": "vscode",
   "postCreateCommand": "(uvx ruff check . || true) && (uvx ruff format --check . || true) && (uv run pytest || true)",  // informational checks on first create
-  "postStartCommand": "uv sync && uv run pre-commit install",  // ensures deps + git hooks on every start
+  "postStartCommand": "uv sync && uv run pre-commit install",
+  "postAttachCommand": "uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -39,7 +40,7 @@
       }
     }
   },
-  "forwardPorts": [5678],
+  "forwardPorts": [5678, 8000],
   "features": {
     "ghcr.io/devcontainers/features/sshd:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
