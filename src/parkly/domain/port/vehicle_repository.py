@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from parkly.domain.model.typed_ids import OwnerId, VehicleId
+from parkly.domain.model.identifiers import OwnerId, VehicleId
 from parkly.domain.model.value_objects import LicensePlate
 from parkly.domain.model.vehicle import Vehicle
 

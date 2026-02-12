@@ -20,7 +20,9 @@ services:
       db:
         condition: service_healthy
       goauth:
-        condition: service_healthy
+        condition: service_started
+    networks:
+      - parkly-net
 
   db:
     image: postgres:17-alpine
@@ -39,6 +41,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - parkly-net
 
   goauth:
     image: ghcr.io/aymankastali/go_auth:latest
@@ -55,11 +59,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/8080'"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    networks:
+      - parkly-net
 
 volumes:
   pgdata:
+
+networks:
+  parkly-net:
+    driver: bridge

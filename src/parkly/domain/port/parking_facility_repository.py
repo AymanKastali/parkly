@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from decimal import Decimal
 
+from parkly.domain.model.identifiers import FacilityId
 from parkly.domain.model.parking_facility import ParkingFacility
-from parkly.domain.model.typed_ids import FacilityId
 from parkly.domain.model.value_objects import Location
 
 

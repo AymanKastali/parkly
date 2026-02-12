@@ -4,8 +4,8 @@ from decimal import Decimal
 from parkly.application.port.event_publisher import EventPublisher
 from parkly.application.port.logger import Logger
 from parkly.domain.model.enums import AccessControlMethod, FacilityType
+from parkly.domain.model.identifiers import FacilityId
 from parkly.domain.model.parking_facility import ParkingFacility
-from parkly.domain.model.typed_ids import FacilityId
 from parkly.domain.model.value_objects import Capacity, FacilityName, Location
 from parkly.domain.port.clock import Clock
 from parkly.domain.port.id_generator import IdGenerator

@@ -5,7 +5,7 @@ from parkly.application.dto.spot_dto import SpotDTO
 from parkly.application.exception.exceptions import FacilityNotFoundError
 from parkly.application.port.logger import Logger
 from parkly.domain.model.enums import SpotType
-from parkly.domain.model.typed_ids import FacilityId
+from parkly.domain.model.identifiers import FacilityId
 from parkly.domain.model.value_objects import TimeSlot
 from parkly.domain.port.parking_facility_repository import ParkingFacilityRepository
 

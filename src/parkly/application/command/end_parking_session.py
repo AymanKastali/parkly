@@ -4,7 +4,7 @@ from decimal import Decimal
 from parkly.application.exception.exceptions import SessionNotFoundError
 from parkly.application.port.event_publisher import EventPublisher
 from parkly.application.port.logger import Logger
-from parkly.domain.model.typed_ids import SessionId
+from parkly.domain.model.identifiers import SessionId
 from parkly.domain.model.value_objects import Currency, Money
 from parkly.domain.port.clock import Clock
 from parkly.domain.port.parking_session_repository import ParkingSessionRepository

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
+from parkly.domain.model.identifiers import SessionId, SpotId, VehicleId
 from parkly.domain.model.parking_session import ParkingSession
-from parkly.domain.model.typed_ids import SessionId, SpotId, VehicleId
 
 
 class ParkingSessionRepository(ABC):

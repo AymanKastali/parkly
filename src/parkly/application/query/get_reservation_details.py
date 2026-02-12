@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from parkly.application.dto.reservation_dto import ReservationDTO
 from parkly.application.exception.exceptions import ReservationNotFoundError
 from parkly.application.port.logger import Logger
-from parkly.domain.model.typed_ids import ReservationId
+from parkly.domain.model.identifiers import ReservationId
 from parkly.domain.port.reservation_repository import ReservationRepository
 
 

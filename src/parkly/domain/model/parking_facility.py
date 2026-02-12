@@ -10,14 +10,14 @@ from parkly.domain.exception.exceptions import (
     SpotNotAvailableError,
     SpotNotFoundError,
 )
+from parkly.domain.model.entity import AggregateRoot, Entity
 from parkly.domain.model.enums import (
     AccessControlMethod,
     FacilityType,
     SpotStatus,
     SpotType,
 )
-from parkly.domain.model.entity import AggregateRoot, Entity
-from parkly.domain.model.typed_ids import FacilityId, SpotId
+from parkly.domain.model.identifiers import FacilityId, SpotId
 from parkly.domain.model.value_objects import (
     Capacity,
     FacilityName,

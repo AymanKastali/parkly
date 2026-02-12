@@ -15,15 +15,15 @@ from parkly.domain.exception.exceptions import (
     RequiredFieldError,
     ReservationNotExtendableError,
 )
+from parkly.domain.model.entity import AggregateRoot
 from parkly.domain.model.enums import ReservationStatus
-from parkly.domain.model.typed_ids import (
+from parkly.domain.model.identifiers import (
     FacilityId,
     ReservationId,
     SpotId,
     VehicleId,
 )
 from parkly.domain.model.value_objects import Money, TimeSlot
-from parkly.domain.model.entity import AggregateRoot
 
 
 @dataclass

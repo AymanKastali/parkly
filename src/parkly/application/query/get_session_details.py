@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from parkly.application.dto.session_dto import SessionDTO
 from parkly.application.exception.exceptions import SessionNotFoundError
 from parkly.application.port.logger import Logger
-from parkly.domain.model.typed_ids import SessionId
+from parkly.domain.model.identifiers import SessionId
 from parkly.domain.port.parking_session_repository import ParkingSessionRepository
 
 
