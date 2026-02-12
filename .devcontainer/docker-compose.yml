@@ -15,8 +15,11 @@ services:
       - "8000:8000"
     environment:
       PARKLY_DATABASE_URL: "postgresql+asyncpg://parkly:parkly@db:5432/parkly"
+      PARKLY_AUTH_SERVICE_URL: "http://goauth:8080"
     depends_on:
       db:
+        condition: service_healthy
+      goauth:
         condition: service_healthy
 
   db:
@@ -30,8 +33,30 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U parkly"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  goauth:
+    image: ghcr.io/aymankastali/go_auth:latest
+    container_name: parkly-goauth
+    environment:
+      GA_DATABASE_URL: "postgres://goauth:goauth@db:5432/goauth?sslmode=disable"
+      GA_JWT_SECRET: "c2VjcmV0LWtleS1mb3ItZGV2LW9ubHk="
+      GA_ADMIN_EMAIL: "admin@parkly.local"
+      GA_ADMIN_PASSWORD: "Admin123!"
+      GA_EMAIL_FROM: "noreply@parkly.local"
+      GA_EMAIL_RESET_BASE_URL: "http://localhost:8000/reset-password"
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/8080'"]
       interval: 5s
       timeout: 5s
       retries: 5

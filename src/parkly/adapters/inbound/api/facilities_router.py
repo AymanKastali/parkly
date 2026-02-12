@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from fastapi import APIRouter, Query, Response
+from fastapi import APIRouter, Query, Request, Response
 
 from parkly.adapters.inbound.api.schemas import (
     AddSpotRequest,
@@ -36,9 +36,16 @@ def create_facilities_router(container: Container) -> APIRouter:
         response_model=CreatedResponse,
         summary="Create a parking facility",
         description="Register a new parking facility with location, type, access control method, and capacity.",
-        responses={422: {"model": ErrorResponse, "description": "Validation error"}},
+        responses={
+            401: {"model": ErrorResponse, "description": "Unauthorized"},
+            403: {"model": ErrorResponse, "description": "Forbidden"},
+            422: {"model": ErrorResponse, "description": "Validation error"},
+        },
     )
-    async def create_facility(body: CreateFacilityRequest) -> CreatedResponse:
+    async def create_facility(
+        request: Request, body: CreateFacilityRequest
+    ) -> CreatedResponse:
+        await container.admin_guard(request)
         command: CreateParkingFacility = CreateParkingFacility(
             name=body.name,
             latitude=body.latitude,
@@ -136,12 +143,17 @@ def create_facilities_router(container: Container) -> APIRouter:
         summary="Add a parking spot",
         description="Add a new parking spot to an existing facility.",
         responses={
+            401: {"model": ErrorResponse, "description": "Unauthorized"},
+            403: {"model": ErrorResponse, "description": "Forbidden"},
             404: {"model": ErrorResponse, "description": "Facility not found"},
             409: {"model": ErrorResponse, "description": "Capacity exceeded"},
             422: {"model": ErrorResponse, "description": "Validation error"},
         },
     )
-    async def add_spot(facility_id: str, body: AddSpotRequest) -> CreatedResponse:
+    async def add_spot(
+        request: Request, facility_id: str, body: AddSpotRequest
+    ) -> CreatedResponse:
+        await container.admin_guard(request)
         command: AddParkingSpot = AddParkingSpot(
             facility_id=facility_id,
             spot_number=body.spot_number,
@@ -157,10 +169,13 @@ def create_facilities_router(container: Container) -> APIRouter:
         summary="Remove a parking spot",
         description="Remove a parking spot from a facility.",
         responses={
+            401: {"model": ErrorResponse, "description": "Unauthorized"},
+            403: {"model": ErrorResponse, "description": "Forbidden"},
             404: {"model": ErrorResponse, "description": "Facility or spot not found"},
         },
     )
-    async def remove_spot(facility_id: str, spot_id: str) -> Response:
+    async def remove_spot(request: Request, facility_id: str, spot_id: str) -> Response:
+        await container.admin_guard(request)
         command: RemoveParkingSpot = RemoveParkingSpot(
             facility_id=facility_id,
             spot_id=spot_id,

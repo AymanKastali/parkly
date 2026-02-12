@@ -1,6 +1,10 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from parkly.adapters.inbound.api.auth_exceptions import (
+    AuthenticationError,
+    InsufficientRoleError,
+)
 from parkly.application.exception.exceptions import (
     ApplicationError,
     NotFoundError,
@@ -31,6 +35,18 @@ def _error_response(status_code: int, exc: Exception, logger: Logger) -> JSONRes
 
 
 def register_exception_handlers(app: FastAPI, logger: Logger) -> None:
+    @app.exception_handler(AuthenticationError)
+    async def authentication_error_handler(
+        request: Request, exc: AuthenticationError
+    ) -> JSONResponse:
+        return _error_response(401, exc, logger)
+
+    @app.exception_handler(InsufficientRoleError)
+    async def insufficient_role_handler(
+        request: Request, exc: InsufficientRoleError
+    ) -> JSONResponse:
+        return _error_response(403, exc, logger)
+
     @app.exception_handler(NotFoundError)
     async def not_found_handler(request: Request, exc: NotFoundError) -> JSONResponse:
         return _error_response(404, exc, logger)

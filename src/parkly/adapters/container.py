@@ -1,6 +1,9 @@
+import httpx
 from loggerizer import LogLevel
 
 from parkly.adapters.config import AppSettings
+from parkly.adapters.inbound.api.auth_dependency import AuthDependency, RequireRoles
+from parkly.adapters.outbound.auth.goauth_client import GoAuthTokenValidator
 from parkly.adapters.outbound.infrastructure.system_clock import SystemClock
 from parkly.adapters.outbound.infrastructure.ulid_id_generator import (
     FacilityIdGenerator,
@@ -69,6 +72,7 @@ from parkly.application.query.list_vehicle_reservations import (
 )
 from parkly.application.query.list_vehicle_sessions import ListVehicleSessionsHandler
 from parkly.domain.event.events import ReservationCancelled, SessionEnded
+from parkly.application.port.token_validator import TokenValidator
 from parkly.domain.port.parking_facility_repository import ParkingFacilityRepository
 from parkly.domain.port.parking_session_repository import ParkingSessionRepository
 from parkly.domain.port.reservation_repository import ReservationRepository
@@ -95,6 +99,20 @@ class Container:
             max_overflow=settings.db_max_overflow,
         )
         self.session_factory = create_session_factory(self.engine)
+
+        # Auth
+        self.http_client: httpx.AsyncClient = httpx.AsyncClient()
+        self.token_validator: TokenValidator = GoAuthTokenValidator(
+            base_url=settings.auth_service_url,
+            http_client=self.http_client,
+        )
+        self.auth_dependency: AuthDependency = AuthDependency(
+            token_validator=self.token_validator,
+        )
+        self.admin_guard: RequireRoles = RequireRoles(
+            auth=self.auth_dependency,
+            roles={"admin", "super_admin"},
+        )
 
         # ID generators
         self.facility_id_generator: FacilityIdGenerator = FacilityIdGenerator()
