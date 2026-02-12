@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import ClassVar, Self
 
 from parkly.domain.event.events import VehicleRegistered
@@ -56,6 +57,7 @@ class Vehicle(AggregateRoot[VehicleId]):
         license_plate: LicensePlate,
         vehicle_type: VehicleType,
         is_ev: bool,
+        occurred_at: datetime,
     ) -> Self:
         if vehicle_id is None:
             raise RequiredFieldError(cls.__name__, "vehicle_id")
@@ -79,6 +81,7 @@ class Vehicle(AggregateRoot[VehicleId]):
                 vehicle_id=vehicle_id,
                 owner_id=owner_id,
                 license_plate=license_plate,
+                occurred_at=occurred_at,
             )
         )
         return vehicle

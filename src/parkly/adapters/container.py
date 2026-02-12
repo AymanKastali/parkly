@@ -130,6 +130,7 @@ class Container:
             CreateParkingFacilityHandler(
                 facility_repo=self.facility_repo,
                 id_generator=self.facility_id_generator,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -137,12 +138,14 @@ class Container:
         self.add_parking_spot_handler: AddParkingSpotHandler = AddParkingSpotHandler(
             facility_repo=self.facility_repo,
             id_generator=self.spot_id_generator,
+            clock=self.clock,
             event_publisher=self.event_publisher,
             logger=self.logger,
         )
         self.remove_parking_spot_handler: RemoveParkingSpotHandler = (
             RemoveParkingSpotHandler(
                 facility_repo=self.facility_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -150,6 +153,7 @@ class Container:
         self.register_vehicle_handler: RegisterVehicleHandler = RegisterVehicleHandler(
             vehicle_repo=self.vehicle_repo,
             id_generator=self.vehicle_id_generator,
+            clock=self.clock,
             event_publisher=self.event_publisher,
             logger=self.logger,
         )
@@ -168,6 +172,7 @@ class Container:
         self.confirm_reservation_handler: ConfirmReservationHandler = (
             ConfirmReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -175,6 +180,7 @@ class Container:
         self.activate_reservation_handler: ActivateReservationHandler = (
             ActivateReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -182,6 +188,7 @@ class Container:
         self.complete_reservation_handler: CompleteReservationHandler = (
             CompleteReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -189,6 +196,7 @@ class Container:
         self.cancel_reservation_handler: CancelReservationHandler = (
             CancelReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -213,6 +221,7 @@ class Container:
         self.extend_parking_session_handler: ExtendParkingSessionHandler = (
             ExtendParkingSessionHandler(
                 session_repo=self.session_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -289,6 +298,7 @@ class Container:
             session_repo=self.session_repo,
             facility_repo=self.facility_repo,
             reservation_repo=self.reservation_repo,
+            clock=self.clock,
             event_publisher=self.event_publisher,
             logger=self.logger,
         )

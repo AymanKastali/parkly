@@ -7,6 +7,7 @@ from parkly.domain.model.enums import AccessControlMethod, FacilityType
 from parkly.domain.model.parking_facility import ParkingFacility
 from parkly.domain.model.typed_ids import FacilityId
 from parkly.domain.model.value_objects import Capacity, FacilityName, Location
+from parkly.domain.port.clock import Clock
 from parkly.domain.port.id_generator import IdGenerator
 from parkly.domain.port.parking_facility_repository import ParkingFacilityRepository
 
@@ -27,11 +28,13 @@ class CreateParkingFacilityHandler:
         self,
         facility_repo: ParkingFacilityRepository,
         id_generator: IdGenerator[FacilityId],
+        clock: Clock,
         event_publisher: EventPublisher,
         logger: Logger,
     ) -> None:
         self._facility_repo = facility_repo
         self._id_generator = id_generator
+        self._clock = clock
         self._event_publisher = event_publisher
         self._logger = logger
 
@@ -55,6 +58,7 @@ class CreateParkingFacilityHandler:
         facility_type = FacilityType(command.facility_type)
         access_control = AccessControlMethod(command.access_control)
 
+        occurred_at = self._clock.now()
         facility = ParkingFacility.create(
             facility_id=facility_id,
             name=name,
@@ -62,6 +66,7 @@ class CreateParkingFacilityHandler:
             facility_type=facility_type,
             access_control=access_control,
             total_capacity=capacity,
+            occurred_at=occurred_at,
         )
 
         await self._facility_repo.save(facility)

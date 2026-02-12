@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Self
 
 from parkly.domain.event.events import FacilityCreated, SpotAdded, SpotRemoved
@@ -136,6 +137,7 @@ class ParkingFacility(AggregateRoot[FacilityId]):
         facility_type: FacilityType,
         access_control: AccessControlMethod,
         total_capacity: Capacity,
+        occurred_at: datetime,
     ) -> Self:
         if facility_id is None:
             raise RequiredFieldError(cls.__name__, "facility_id")
@@ -160,6 +162,7 @@ class ParkingFacility(AggregateRoot[FacilityId]):
         facility._record_event(
             FacilityCreated(
                 facility_id=facility_id,
+                occurred_at=occurred_at,
             )
         )
         return facility
@@ -191,6 +194,7 @@ class ParkingFacility(AggregateRoot[FacilityId]):
         spot_number: SpotNumber,
         spot_type: SpotType,
         status: SpotStatus,
+        occurred_at: datetime,
     ) -> None:
         if len(self._spots) >= self._total_capacity.value:
             raise CapacityExceededError(
@@ -211,10 +215,11 @@ class ParkingFacility(AggregateRoot[FacilityId]):
                 facility_id=self._id,
                 spot_id=spot_id,
                 spot_type=spot_type,
+                occurred_at=occurred_at,
             )
         )
 
-    def remove_spot(self, spot_id: SpotId) -> None:
+    def remove_spot(self, spot_id: SpotId, occurred_at: datetime) -> None:
         for i, spot in enumerate(self._spots):
             if spot.id == spot_id:
                 self._spots.pop(i)
@@ -222,6 +227,7 @@ class ParkingFacility(AggregateRoot[FacilityId]):
                     SpotRemoved(
                         facility_id=self._id,
                         spot_id=spot_id,
+                        occurred_at=occurred_at,
                     )
                 )
                 return

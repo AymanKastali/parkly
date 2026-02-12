@@ -7,6 +7,7 @@ from parkly.application.port.event_publisher import EventPublisher
 from parkly.application.port.logger import Logger
 from parkly.domain.model.typed_ids import SessionId
 from parkly.domain.model.value_objects import Currency, Money
+from parkly.domain.port.clock import Clock
 from parkly.domain.port.parking_session_repository import ParkingSessionRepository
 
 
@@ -22,10 +23,12 @@ class ExtendParkingSessionHandler:
     def __init__(
         self,
         session_repo: ParkingSessionRepository,
+        clock: Clock,
         event_publisher: EventPublisher,
         logger: Logger,
     ) -> None:
         self._session_repo = session_repo
+        self._clock = clock
         self._event_publisher = event_publisher
         self._logger = logger
 
@@ -52,7 +55,7 @@ class ExtendParkingSessionHandler:
             )
             raise SessionNotFoundError(session_id)
 
-        session.extend(command.new_end, new_total_cost)
+        session.extend(command.new_end, new_total_cost, occurred_at=self._clock.now())
 
         await self._session_repo.save(session)
         await self._event_publisher.publish(session.collect_events())

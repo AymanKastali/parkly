@@ -80,14 +80,16 @@ class StartParkingSessionHandler:
         if active_session is not None:
             raise SpotAlreadyOccupiedError(spot_id)
 
+        occurred_at = self._clock.now()
         session_id = self._id_generator.generate()
         session = ParkingSession.create(
             session_id=session_id,
             facility_id=facility_id,
             spot_id=spot_id,
             vehicle_id=vehicle_id,
-            entry_time=self._clock.now(),
+            entry_time=occurred_at,
             total_cost=Money(amount=Decimal("0"), currency=currency),
+            occurred_at=occurred_at,
             reservation_id=reservation_id,
         )
 

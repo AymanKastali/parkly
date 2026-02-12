@@ -1,6 +1,7 @@
 from parkly.application.port.event_publisher import EventPublisher
 from parkly.application.port.logger import Logger
 from parkly.domain.event.events import SessionEnded
+from parkly.domain.port.clock import Clock
 from parkly.domain.port.parking_facility_repository import ParkingFacilityRepository
 from parkly.domain.port.parking_session_repository import ParkingSessionRepository
 from parkly.domain.port.reservation_repository import ReservationRepository
@@ -12,12 +13,14 @@ class OnSessionEndedReleaseSpot:
         session_repo: ParkingSessionRepository,
         facility_repo: ParkingFacilityRepository,
         reservation_repo: ReservationRepository,
+        clock: Clock,
         event_publisher: EventPublisher,
         logger: Logger,
     ) -> None:
         self._session_repo = session_repo
         self._facility_repo = facility_repo
         self._reservation_repo = reservation_repo
+        self._clock = clock
         self._event_publisher = event_publisher
         self._logger = logger
 
@@ -55,7 +58,7 @@ class OnSessionEndedReleaseSpot:
                 session.reservation_id
             )
             if reservation is not None:
-                reservation.complete()
+                reservation.complete(occurred_at=self._clock.now())
                 await self._reservation_repo.save(reservation)
                 await self._event_publisher.publish(reservation.collect_events())
 

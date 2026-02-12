@@ -100,6 +100,7 @@ class Reservation(AggregateRoot[ReservationId]):
         status: ReservationStatus,
         total_cost: Money,
         created_at: datetime,
+        occurred_at: datetime,
     ) -> Self:
         if reservation_id is None:
             raise RequiredFieldError(cls.__name__, "reservation_id")
@@ -138,6 +139,7 @@ class Reservation(AggregateRoot[ReservationId]):
                 spot_id=spot_id,
                 vehicle_id=vehicle_id,
                 time_slot=time_slot,
+                occurred_at=occurred_at,
             )
         )
         return reservation
@@ -165,36 +167,40 @@ class Reservation(AggregateRoot[ReservationId]):
             _created_at=created_at,
         )
 
-    def confirm(self) -> None:
+    def confirm(self, occurred_at: datetime) -> None:
         self._transition_to(ReservationStatus.CONFIRMED)
         self._record_event(
             ReservationConfirmed(
                 reservation_id=self._id,
+                occurred_at=occurred_at,
             )
         )
 
-    def activate(self) -> None:
+    def activate(self, occurred_at: datetime) -> None:
         self._transition_to(ReservationStatus.ACTIVE)
         self._record_event(
             ReservationActivated(
                 reservation_id=self._id,
+                occurred_at=occurred_at,
             )
         )
 
-    def complete(self) -> None:
+    def complete(self, occurred_at: datetime) -> None:
         self._transition_to(ReservationStatus.COMPLETED)
         self._record_event(
             ReservationCompleted(
                 reservation_id=self._id,
+                occurred_at=occurred_at,
             )
         )
 
-    def cancel(self, reason: str = "") -> None:
+    def cancel(self, occurred_at: datetime, reason: str = "") -> None:
         self._transition_to(ReservationStatus.CANCELLED)
         self._record_event(
             ReservationCancelled(
                 reservation_id=self._id,
                 reason=reason,
+                occurred_at=occurred_at,
             )
         )
 
