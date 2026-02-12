@@ -75,6 +75,7 @@ class ParkingSession(AggregateRoot[SessionId]):
         vehicle_id: VehicleId,
         entry_time: datetime,
         total_cost: Money,
+        occurred_at: datetime,
         reservation_id: ReservationId | None = None,
         exit_time: datetime | None = None,
     ) -> Self:
@@ -106,6 +107,7 @@ class ParkingSession(AggregateRoot[SessionId]):
                 facility_id=facility_id,
                 spot_id=spot_id,
                 vehicle_id=vehicle_id,
+                occurred_at=occurred_at,
             )
         )
         return session
@@ -133,7 +135,9 @@ class ParkingSession(AggregateRoot[SessionId]):
             _total_cost=total_cost,
         )
 
-    def extend(self, new_end: datetime, new_total_cost: Money) -> None:
+    def extend(
+        self, new_end: datetime, new_total_cost: Money, occurred_at: datetime
+    ) -> None:
         if not self.is_active:
             raise SessionAlreadyEndedError()
         self._total_cost = new_total_cost
@@ -142,10 +146,13 @@ class ParkingSession(AggregateRoot[SessionId]):
                 session_id=self._id,
                 new_end=new_end,
                 new_total_cost=new_total_cost,
+                occurred_at=occurred_at,
             )
         )
 
-    def end(self, total_cost: Money, exit_time: datetime) -> None:
+    def end(
+        self, total_cost: Money, exit_time: datetime, occurred_at: datetime
+    ) -> None:
         if not self.is_active:
             raise SessionAlreadyEndedError()
         self._exit_time = exit_time
@@ -154,6 +161,7 @@ class ParkingSession(AggregateRoot[SessionId]):
             SessionEnded(
                 session_id=self._id,
                 total_cost=total_cost,
+                occurred_at=occurred_at,
             )
         )
 

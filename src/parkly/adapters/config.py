@@ -10,3 +10,7 @@ class AppSettings(BaseSettings):
     port: int = 8000
     reload: bool = True
     log_level: str = "DEBUG"
+    database_url: str = "postgresql+asyncpg://parkly:parkly@localhost:5432/parkly"
+    db_echo: bool = False
+    db_pool_size: int = 5
+    db_max_overflow: int = 10

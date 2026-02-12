@@ -4,6 +4,7 @@ from parkly.application.exception.exceptions import ReservationNotFoundError
 from parkly.application.port.event_publisher import EventPublisher
 from parkly.application.port.logger import Logger
 from parkly.domain.model.typed_ids import ReservationId
+from parkly.domain.port.clock import Clock
 from parkly.domain.port.reservation_repository import ReservationRepository
 
 
@@ -16,10 +17,12 @@ class ActivateReservationHandler:
     def __init__(
         self,
         reservation_repo: ReservationRepository,
+        clock: Clock,
         event_publisher: EventPublisher,
         logger: Logger,
     ) -> None:
         self._reservation_repo = reservation_repo
+        self._clock = clock
         self._event_publisher = event_publisher
         self._logger = logger
 
@@ -38,7 +41,7 @@ class ActivateReservationHandler:
             )
             raise ReservationNotFoundError(reservation_id)
 
-        reservation.activate()
+        reservation.activate(occurred_at=self._clock.now())
 
         await self._reservation_repo.save(reservation)
         await self._event_publisher.publish(reservation.collect_events())

@@ -13,17 +13,21 @@ from parkly.adapters.outbound.logging.json_console_logger import JsonConsoleLogg
 from parkly.adapters.outbound.messaging.in_memory_event_publisher import (
     InMemoryEventPublisher,
 )
-from parkly.adapters.outbound.persistence.in_memory_parking_facility_repository import (
-    InMemoryParkingFacilityRepository,
+from parkly.adapters.outbound.persistence.database import (
+    create_engine,
+    create_session_factory,
 )
-from parkly.adapters.outbound.persistence.in_memory_parking_session_repository import (
-    InMemoryParkingSessionRepository,
+from parkly.adapters.outbound.persistence.pg_parking_facility_repository import (
+    PgParkingFacilityRepository,
 )
-from parkly.adapters.outbound.persistence.in_memory_reservation_repository import (
-    InMemoryReservationRepository,
+from parkly.adapters.outbound.persistence.pg_parking_session_repository import (
+    PgParkingSessionRepository,
 )
-from parkly.adapters.outbound.persistence.in_memory_vehicle_repository import (
-    InMemoryVehicleRepository,
+from parkly.adapters.outbound.persistence.pg_reservation_repository import (
+    PgReservationRepository,
+)
+from parkly.adapters.outbound.persistence.pg_vehicle_repository import (
+    PgVehicleRepository,
 )
 from parkly.application.command.activate_reservation import ActivateReservationHandler
 from parkly.application.command.add_parking_spot import AddParkingSpotHandler
@@ -65,6 +69,10 @@ from parkly.application.query.list_vehicle_reservations import (
 )
 from parkly.application.query.list_vehicle_sessions import ListVehicleSessionsHandler
 from parkly.domain.event.events import ReservationCancelled, SessionEnded
+from parkly.domain.port.parking_facility_repository import ParkingFacilityRepository
+from parkly.domain.port.parking_session_repository import ParkingSessionRepository
+from parkly.domain.port.reservation_repository import ReservationRepository
+from parkly.domain.port.vehicle_repository import VehicleRepository
 from parkly.domain.service.pricing_service import PricingService
 from parkly.domain.service.pricing_strategy import StaticPricing
 
@@ -79,6 +87,15 @@ class Container:
         )
         self.clock: SystemClock = SystemClock()
 
+        # Database
+        self.engine = create_engine(
+            database_url=settings.database_url,
+            echo=settings.db_echo,
+            pool_size=settings.db_pool_size,
+            max_overflow=settings.db_max_overflow,
+        )
+        self.session_factory = create_session_factory(self.engine)
+
         # ID generators
         self.facility_id_generator: FacilityIdGenerator = FacilityIdGenerator()
         self.spot_id_generator: SpotIdGenerator = SpotIdGenerator()
@@ -87,17 +104,17 @@ class Container:
         self.session_id_generator: SessionIdGenerator = SessionIdGenerator()
 
         # Repositories
-        self.facility_repo: InMemoryParkingFacilityRepository = (
-            InMemoryParkingFacilityRepository(logger=self.logger)
+        self.facility_repo: ParkingFacilityRepository = PgParkingFacilityRepository(
+            session_factory=self.session_factory, logger=self.logger
         )
-        self.reservation_repo: InMemoryReservationRepository = (
-            InMemoryReservationRepository(logger=self.logger)
+        self.reservation_repo: ReservationRepository = PgReservationRepository(
+            session_factory=self.session_factory, logger=self.logger
         )
-        self.session_repo: InMemoryParkingSessionRepository = (
-            InMemoryParkingSessionRepository(logger=self.logger)
+        self.session_repo: ParkingSessionRepository = PgParkingSessionRepository(
+            session_factory=self.session_factory, logger=self.logger
         )
-        self.vehicle_repo: InMemoryVehicleRepository = InMemoryVehicleRepository(
-            logger=self.logger
+        self.vehicle_repo: VehicleRepository = PgVehicleRepository(
+            session_factory=self.session_factory, logger=self.logger
         )
 
         # Domain services
@@ -113,6 +130,7 @@ class Container:
             CreateParkingFacilityHandler(
                 facility_repo=self.facility_repo,
                 id_generator=self.facility_id_generator,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -120,12 +138,14 @@ class Container:
         self.add_parking_spot_handler: AddParkingSpotHandler = AddParkingSpotHandler(
             facility_repo=self.facility_repo,
             id_generator=self.spot_id_generator,
+            clock=self.clock,
             event_publisher=self.event_publisher,
             logger=self.logger,
         )
         self.remove_parking_spot_handler: RemoveParkingSpotHandler = (
             RemoveParkingSpotHandler(
                 facility_repo=self.facility_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -133,6 +153,7 @@ class Container:
         self.register_vehicle_handler: RegisterVehicleHandler = RegisterVehicleHandler(
             vehicle_repo=self.vehicle_repo,
             id_generator=self.vehicle_id_generator,
+            clock=self.clock,
             event_publisher=self.event_publisher,
             logger=self.logger,
         )
@@ -151,6 +172,7 @@ class Container:
         self.confirm_reservation_handler: ConfirmReservationHandler = (
             ConfirmReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -158,6 +180,7 @@ class Container:
         self.activate_reservation_handler: ActivateReservationHandler = (
             ActivateReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -165,6 +188,7 @@ class Container:
         self.complete_reservation_handler: CompleteReservationHandler = (
             CompleteReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -172,6 +196,7 @@ class Container:
         self.cancel_reservation_handler: CancelReservationHandler = (
             CancelReservationHandler(
                 reservation_repo=self.reservation_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -196,6 +221,7 @@ class Container:
         self.extend_parking_session_handler: ExtendParkingSessionHandler = (
             ExtendParkingSessionHandler(
                 session_repo=self.session_repo,
+                clock=self.clock,
                 event_publisher=self.event_publisher,
                 logger=self.logger,
             )
@@ -272,6 +298,7 @@ class Container:
             session_repo=self.session_repo,
             facility_repo=self.facility_repo,
             reservation_repo=self.reservation_repo,
+            clock=self.clock,
             event_publisher=self.event_publisher,
             logger=self.logger,
         )

@@ -50,9 +50,9 @@ class EndParkingSessionHandler:
             )
             raise SessionNotFoundError(session_id)
 
-        exit_time = self._clock.now()
-        total_cost = session.calculate_cost(rate_per_hour, exit_time)
-        session.end(total_cost, exit_time)
+        occurred_at = self._clock.now()
+        total_cost = session.calculate_cost(rate_per_hour, occurred_at)
+        session.end(total_cost, occurred_at, occurred_at=occurred_at)
 
         await self._session_repo.save(session)
         await self._event_publisher.publish(session.collect_events())

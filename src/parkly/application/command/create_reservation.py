@@ -123,6 +123,7 @@ class CreateReservationHandler:
         await self._facility_repo.save(facility)
         await self._event_publisher.publish(facility.collect_events())
 
+        occurred_at = self._clock.now()
         reservation_id = self._id_generator.generate()
         reservation = Reservation.create(
             reservation_id=reservation_id,
@@ -132,7 +133,8 @@ class CreateReservationHandler:
             time_slot=time_slot,
             status=ReservationStatus.PENDING,
             total_cost=total_cost,
-            created_at=self._clock.now(),
+            created_at=occurred_at,
+            occurred_at=occurred_at,
         )
 
         await self._reservation_repo.save(reservation)

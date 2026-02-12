@@ -13,3 +13,28 @@ services:
     ports:
       - "5678:5678"
       - "8000:8000"
+    environment:
+      PARKLY_DATABASE_URL: "postgresql+asyncpg://parkly:parkly@db:5432/parkly"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    container_name: parkly-db
+    environment:
+      POSTGRES_USER: parkly
+      POSTGRES_PASSWORD: parkly
+      POSTGRES_DB: parkly
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U parkly"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

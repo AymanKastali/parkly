@@ -6,6 +6,7 @@ from parkly.domain.model.enums import VehicleType
 from parkly.domain.model.typed_ids import OwnerId, VehicleId
 from parkly.domain.model.value_objects import LicensePlate
 from parkly.domain.model.vehicle import Vehicle
+from parkly.domain.port.clock import Clock
 from parkly.domain.port.id_generator import IdGenerator
 from parkly.domain.port.vehicle_repository import VehicleRepository
 
@@ -24,11 +25,13 @@ class RegisterVehicleHandler:
         self,
         vehicle_repo: VehicleRepository,
         id_generator: IdGenerator[VehicleId],
+        clock: Clock,
         event_publisher: EventPublisher,
         logger: Logger,
     ) -> None:
         self._vehicle_repo = vehicle_repo
         self._id_generator = id_generator
+        self._clock = clock
         self._event_publisher = event_publisher
         self._logger = logger
 
@@ -49,12 +52,14 @@ class RegisterVehicleHandler:
         )
         vehicle_type = VehicleType(command.vehicle_type)
 
+        occurred_at = self._clock.now()
         vehicle = Vehicle.create(
             vehicle_id=vehicle_id,
             owner_id=owner_id,
             license_plate=license_plate,
             vehicle_type=vehicle_type,
             is_ev=command.is_ev,
+            occurred_at=occurred_at,
         )
 
         await self._vehicle_repo.save(vehicle)
