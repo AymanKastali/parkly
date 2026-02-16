@@ -13,10 +13,7 @@ from parkly.domain.model.enums import (
     SpotType,
     VehicleType,
 )
-from parkly.domain.model.parking_facility import ParkingFacility, ParkingSpot
-from parkly.domain.model.parking_session import ParkingSession
-from parkly.domain.model.reservation import Reservation
-from parkly.domain.model.typed_ids import (
+from parkly.domain.model.identifiers import (
     FacilityId,
     OwnerId,
     ReservationId,
@@ -24,6 +21,9 @@ from parkly.domain.model.typed_ids import (
     SpotId,
     VehicleId,
 )
+from parkly.domain.model.parking_facility import ParkingFacility, ParkingSpot
+from parkly.domain.model.parking_session import ParkingSession
+from parkly.domain.model.reservation import Reservation
 from parkly.domain.model.value_objects import (
     Capacity,
     Currency,
@@ -35,7 +35,6 @@ from parkly.domain.model.value_objects import (
     TimeSlot,
 )
 from parkly.domain.model.vehicle import Vehicle
-
 
 # --- ParkingSpot ---
 

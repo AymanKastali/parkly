@@ -7,8 +7,8 @@ from parkly.adapters.outbound.persistence.mappers import (
 )
 from parkly.adapters.outbound.persistence.orm_models import ReservationORM
 from parkly.application.port.logger import Logger
+from parkly.domain.model.identifiers import ReservationId, SpotId, VehicleId
 from parkly.domain.model.reservation import Reservation
-from parkly.domain.model.typed_ids import ReservationId, SpotId, VehicleId
 from parkly.domain.model.value_objects import TimeSlot
 from parkly.domain.port.reservation_repository import ReservationRepository
 

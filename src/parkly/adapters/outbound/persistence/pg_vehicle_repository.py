@@ -7,7 +7,7 @@ from parkly.adapters.outbound.persistence.mappers import (
 )
 from parkly.adapters.outbound.persistence.orm_models import VehicleORM
 from parkly.application.port.logger import Logger
-from parkly.domain.model.typed_ids import OwnerId, VehicleId
+from parkly.domain.model.identifiers import OwnerId, VehicleId
 from parkly.domain.model.value_objects import LicensePlate
 from parkly.domain.model.vehicle import Vehicle
 from parkly.domain.port.vehicle_repository import VehicleRepository

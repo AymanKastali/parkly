@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from parkly.application.dto.facility_dto import FacilityDTO
 from parkly.application.exception.exceptions import FacilityNotFoundError
 from parkly.application.port.logger import Logger
-from parkly.domain.model.typed_ids import FacilityId
+from parkly.domain.model.identifiers import FacilityId
 from parkly.domain.port.parking_facility_repository import ParkingFacilityRepository
 
 

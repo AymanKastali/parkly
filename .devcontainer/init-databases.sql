@@ -1,0 +1,2 @@
+CREATE USER goauth WITH PASSWORD 'goauth';
+CREATE DATABASE goauth OWNER goauth;

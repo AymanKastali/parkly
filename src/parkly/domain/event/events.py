@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from parkly.domain.event.domain_event import DomainEvent
 from parkly.domain.model.enums import SpotType
-from parkly.domain.model.typed_ids import (
+from parkly.domain.model.identifiers import (
     FacilityId,
     OwnerId,
     ReservationId,
@@ -11,7 +12,6 @@ from parkly.domain.model.typed_ids import (
     VehicleId,
 )
 from parkly.domain.model.value_objects import LicensePlate, Money, TimeSlot
-from parkly.domain.event.domain_event import DomainEvent
 
 # ── ParkingFacility Events ─────────────────────────────────────
 

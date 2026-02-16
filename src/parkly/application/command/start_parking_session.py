@@ -7,14 +7,14 @@ from parkly.application.exception.exceptions import (
 )
 from parkly.application.port.event_publisher import EventPublisher
 from parkly.application.port.logger import Logger
-from parkly.domain.model.parking_session import ParkingSession
-from parkly.domain.model.typed_ids import (
+from parkly.domain.model.identifiers import (
     FacilityId,
     ReservationId,
     SessionId,
     SpotId,
     VehicleId,
 )
+from parkly.domain.model.parking_session import ParkingSession
 from parkly.domain.model.value_objects import Currency, Money
 from parkly.domain.port.clock import Clock
 from parkly.domain.port.id_generator import IdGenerator

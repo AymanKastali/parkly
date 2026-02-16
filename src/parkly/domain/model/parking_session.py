@@ -12,16 +12,16 @@ from parkly.domain.exception.exceptions import (
     RequiredFieldError,
     SessionAlreadyEndedError,
 )
-from parkly.domain.model.typed_ids import (
+from parkly.domain.model.consts import SECONDS_PER_HOUR
+from parkly.domain.model.entity import AggregateRoot
+from parkly.domain.model.identifiers import (
     FacilityId,
     ReservationId,
     SessionId,
     SpotId,
     VehicleId,
 )
-from parkly.domain.model.consts import SECONDS_PER_HOUR
 from parkly.domain.model.value_objects import Money
-from parkly.domain.model.entity import AggregateRoot
 
 
 @dataclass

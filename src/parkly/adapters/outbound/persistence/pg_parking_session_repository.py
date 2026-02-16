@@ -7,8 +7,8 @@ from parkly.adapters.outbound.persistence.mappers import (
 )
 from parkly.adapters.outbound.persistence.orm_models import ParkingSessionORM
 from parkly.application.port.logger import Logger
+from parkly.domain.model.identifiers import SessionId, SpotId, VehicleId
 from parkly.domain.model.parking_session import ParkingSession
-from parkly.domain.model.typed_ids import SessionId, SpotId, VehicleId
 from parkly.domain.port.parking_session_repository import ParkingSessionRepository
 
 

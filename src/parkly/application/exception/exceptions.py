@@ -1,4 +1,4 @@
-from parkly.domain.model.typed_ids import (
+from parkly.domain.model.identifiers import (
     FacilityId,
     ReservationId,
     SessionId,

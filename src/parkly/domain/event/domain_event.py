@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from datetime import datetime
 
 from parkly.domain.exception.exceptions import RequiredFieldError
@@ -9,6 +9,6 @@ class DomainEvent:
     occurred_at: datetime
 
     def __post_init__(self) -> None:
-        for name in self.__dataclass_fields__:
-            if getattr(self, name) is None:
-                raise RequiredFieldError(type(self).__name__, name)
+        for field in fields(self):
+            if getattr(self, field.name) is None:
+                raise RequiredFieldError(type(self).__name__, field.name)

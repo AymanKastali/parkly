@@ -13,8 +13,8 @@ from parkly.domain.exception.exceptions import (
     SpotAlreadyReservedError,
 )
 from parkly.domain.model.enums import ReservationStatus
+from parkly.domain.model.identifiers import FacilityId, ReservationId, SpotId, VehicleId
 from parkly.domain.model.reservation import Reservation
-from parkly.domain.model.typed_ids import FacilityId, ReservationId, SpotId, VehicleId
 from parkly.domain.model.value_objects import Currency, Money, TimeSlot
 from parkly.domain.port.clock import Clock
 from parkly.domain.port.id_generator import IdGenerator

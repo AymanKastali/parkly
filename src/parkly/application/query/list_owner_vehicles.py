@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from parkly.application.dto.vehicle_dto import VehicleDTO
 from parkly.application.port.logger import Logger
-from parkly.domain.model.typed_ids import OwnerId
+from parkly.domain.model.identifiers import OwnerId
 from parkly.domain.port.vehicle_repository import VehicleRepository
 
 

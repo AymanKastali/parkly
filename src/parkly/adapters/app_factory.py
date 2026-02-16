@@ -48,6 +48,10 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
     app.include_router(create_sessions_router(container), prefix="/api/v1")
     app.include_router(create_vehicles_router(container), prefix="/api/v1")
 
+    @app.on_event("shutdown")
+    async def shutdown() -> None:
+        await container.http_client.aclose()
+
     container.logger.info(
         "Application started",
         extra={

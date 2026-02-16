@@ -14,3 +14,4 @@ class AppSettings(BaseSettings):
     db_echo: bool = False
     db_pool_size: int = 5
     db_max_overflow: int = 10
+    auth_service_url: str = "http://localhost:8080"
