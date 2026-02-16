@@ -37,7 +37,12 @@ class ParkingFacilityORM(Base):
         cascade="all, delete-orphan",
     )
 
-    __table_args__ = (Index("ix_facilities_lat_lng", "latitude", "longitude"),)
+    __table_args__ = (
+        UniqueConstraint(
+            "name", "latitude", "longitude", name="uq_facility_name_location"
+        ),
+        Index("ix_facilities_lat_lng", "latitude", "longitude"),
+    )
 
 
 class ParkingSpotORM(Base):

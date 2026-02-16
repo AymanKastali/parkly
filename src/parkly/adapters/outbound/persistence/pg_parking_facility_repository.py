@@ -15,7 +15,7 @@ from parkly.adapters.outbound.persistence.orm_models import (
 from parkly.application.port.logger import Logger
 from parkly.domain.model.identifiers import FacilityId
 from parkly.domain.model.parking_facility import ParkingFacility
-from parkly.domain.model.value_objects import Location
+from parkly.domain.model.value_objects import FacilityName, Location
 from parkly.domain.port.parking_facility_repository import ParkingFacilityRepository
 
 
@@ -96,6 +96,19 @@ class PgParkingFacilityRepository(ParkingFacilityRepository):
         if row is None:
             return None
         return facility_to_domain(row)
+
+    async def exists_by_name_and_location(
+        self, name: FacilityName, location: Location
+    ) -> bool:
+        async with self._session_factory() as session:
+            result = await session.execute(
+                select(ParkingFacilityORM.pk).where(
+                    ParkingFacilityORM.name == name.value,
+                    ParkingFacilityORM.latitude == location.latitude,
+                    ParkingFacilityORM.longitude == location.longitude,
+                )
+            )
+            return result.scalar_one_or_none() is not None
 
     async def find_by_location(
         self, location: Location, radius: Decimal

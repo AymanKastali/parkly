@@ -21,6 +21,7 @@ from parkly.domain.exception.exceptions import (
 
 
 def _error_response(status_code: int, exc: Exception, logger: Logger) -> JSONResponse:
+    error_code = getattr(exc, "code", "UNKNOWN_ERROR")
     logger.warning(
         f"{type(exc).__name__}: {exc}",
         extra={"status_code": status_code, "error": type(exc).__name__},
@@ -28,6 +29,7 @@ def _error_response(status_code: int, exc: Exception, logger: Logger) -> JSONRes
     return JSONResponse(
         status_code=status_code,
         content={
+            "code": error_code,
             "error": type(exc).__name__,
             "detail": str(exc),
         },
