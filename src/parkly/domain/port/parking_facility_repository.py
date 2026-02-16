@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from parkly.domain.model.identifiers import FacilityId
 from parkly.domain.model.parking_facility import ParkingFacility
-from parkly.domain.model.value_objects import Location
+from parkly.domain.model.value_objects import FacilityName, Location
 
 
 class ParkingFacilityRepository(ABC):
@@ -17,3 +17,8 @@ class ParkingFacilityRepository(ABC):
     async def find_by_location(
         self, location: Location, radius: Decimal
     ) -> list[ParkingFacility]: ...
+
+    @abstractmethod
+    async def exists_by_name_and_location(
+        self, name: FacilityName, location: Location
+    ) -> bool: ...

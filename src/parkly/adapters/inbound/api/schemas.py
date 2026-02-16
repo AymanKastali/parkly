@@ -178,6 +178,9 @@ class CreatedResponse(BaseModel):
 
 
 class ErrorResponse(BaseModel):
+    code: str = Field(
+        ..., description="Machine-readable error code", examples=["FACILITY_NOT_FOUND"]
+    )
     error: str = Field(..., description="Error class name", examples=["NotFoundError"])
     detail: str = Field(
         ..., description="Human-readable error message", examples=["Facility not found"]

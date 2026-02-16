@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from parkly.application.port.event_publisher import EventPublisher
 from parkly.application.port.logger import Logger
+from parkly.domain.exception.exceptions import DuplicateFacilityError
 from parkly.domain.model.enums import AccessControlMethod, FacilityType
 from parkly.domain.model.identifiers import FacilityId
 from parkly.domain.model.parking_facility import ParkingFacility
@@ -54,6 +55,10 @@ class CreateParkingFacilityHandler:
             longitude=command.longitude,
             address=command.address,
         )
+
+        if await self._facility_repo.exists_by_name_and_location(name, location):
+            raise DuplicateFacilityError(command.name)
+
         capacity = Capacity(value=command.total_capacity)
         facility_type = FacilityType(command.facility_type)
         access_control = AccessControlMethod(command.access_control)
